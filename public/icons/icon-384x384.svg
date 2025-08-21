@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="384" height="384" viewBox="0 0 384 384" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="384" height="384" fill="#000000" rx="38.400000000000006"/>
+  
+  <!-- Icon content - Simple habit tracker icon -->
+  <g transform="translate(76.80000000000001, 76.80000000000001)">
+    <!-- Checklist icon -->
+    <rect x="46.08" y="46.08" width="138.23999999999998" height="138.23999999999998" 
+          fill="none" stroke="#ffffff" stroke-width="11.52" rx="11.52"/>
+    
+    <!-- Check marks -->
+    <g fill="none" stroke="#ffffff" stroke-width="9.216" stroke-linecap="round">
+      <polyline points="69.11999999999999,80.63999999999999 92.16,103.67999999999999 138.23999999999998,57.599999999999994"/>
+      <polyline points="69.11999999999999,126.72 92.16,149.76 138.23999999999998,103.67999999999999"/>
+    </g>
+    
+    <!-- Calendar grid -->
+    <g stroke="#ffffff" stroke-width="4.608" opacity="0.7">
+      <line x1="57.599999999999994" y1="80.63999999999999" x2="172.79999999999998" y2="80.63999999999999"/>
+      <line x1="57.599999999999994" y1="126.72" x2="172.79999999999998" y2="126.72"/>
+      <line x1="57.599999999999994" y1="172.79999999999998" x2="172.79999999999998" y2="172.79999999999998"/>
+    </g>
+  </g>
+</svg>
