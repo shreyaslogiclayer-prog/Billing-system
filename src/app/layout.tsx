@@ -1,5 +1,6 @@
+
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Nunito } from "next/font/google";
 import "./globals.css";
 import PWAProvider from "@/components/pwa-provider";
 
@@ -26,33 +27,43 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const nunito = Nunito({
+  variable: "--font-nunito",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "PWA App",
-  description: "A Progressive Web Application",
+  title: "QuikReceipts - Modern Receipt Generator",
+  description: "Create beautiful, professional receipts in seconds. No backend required, 100% client-side.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "PWA App",
+    title: "QuikReceipts",
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
     type: "website",
-    siteName: "PWA App",
-    title: "PWA App",
-    description: "A Progressive Web Application",
+    siteName: "QuikReceipts",
+    title: "QuikReceipts - Modern Receipt Generator",
+    description: "Create beautiful, professional receipts in seconds. No backend required, 100% client-side.",
   },
   twitter: {
     card: "summary",
-    title: "PWA App",
-    description: "A Progressive Web Application",
+    title: "QuikReceipts - Modern Receipt Generator",
+    description: "Create beautiful, professional receipts in seconds. No backend required, 100% client-side.",
   },
 };
 
 export const viewport = {
-  themeColor: "#000000",
+  themeColor: "#00bfae",
 };
 
 export default function RootLayout({
@@ -64,17 +75,17 @@ export default function RootLayout({
     <html lang="en">
       <head>
         {/* PWA Meta Tags */}
-        <meta name="application-name" content="PWA App" />
+        <meta name="application-name" content="QuikReceipts" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="PWA App" />
-        <meta name="description" content="A Progressive Web Application" />
+        <meta name="apple-mobile-web-app-title" content="QuikReceipts" />
+        <meta name="description" content="Create beautiful, professional receipts in seconds. No backend required, 100% client-side." />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-config" content="/icons/browserconfig.xml" />
-        <meta name="msapplication-TileColor" content="#000000" />
+        <meta name="msapplication-TileColor" content="#00bfae" />
         <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#00bfae" />
         
         {/* Manifest */}
         <link rel="manifest" href="/manifest.json" />
@@ -98,7 +109,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${nunito.variable} antialiased`}
       >
         <PWAProvider>
           {children}

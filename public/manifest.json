@@ -1,14 +1,14 @@
 {
-  "name": "PWA App",
-  "short_name": "PWA",
-  "description": "A Progressive Web Application",
+  "name": "QuikReceipts - Modern Receipt Generator",
+  "short_name": "QuikReceipts",
+  "description": "Create beautiful, professional receipts in seconds. No backend required, 100% client-side.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
+  "background_color": "#00bfae",
+  "theme_color": "#00bfae",
   "orientation": "portrait-primary",
   "scope": "/",
-  "categories": ["productivity", "lifestyle"],
+  "categories": ["productivity", "business", "finance"],
   "lang": "en-US",
   "icons": [
     {

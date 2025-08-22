@@ -1,103 +1,99 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { Receipt, Sparkles, Play } from "lucide-react";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const loadDemoData = () => {
+    // Use a fixed date to avoid hydration issues
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
+    const demoData = {
+      businessName: "TechCorp Solutions",
+      businessAddress: "123 Innovation Drive, Silicon Valley, CA 94025",
+      businessPhone: "+1 (555) 123-4567",
+      buyerName: "John Smith",
+      date: dateString,
+      products: [
+        {
+          id: "1",
+          name: "Web Development Services",
+          price: 1500.00,
+          quantity: 1
+        },
+        {
+          id: "2",
+          name: "UI/UX Design",
+          price: 800.00,
+          quantity: 1
+        },
+        {
+          id: "3",
+          name: "Hosting & Maintenance",
+          price: 200.00,
+          quantity: 12
+        }
+      ]
+    };
+    
+    localStorage.setItem('receiptData', JSON.stringify(demoData));
+    window.location.href = '/receipt-preview';
+  };
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-teal-400 via-teal-500 to-purple-600 flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        {/* Brand Card */}
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8 text-center transform hover:scale-105 transition-all duration-300">
+          {/* Logo */}
+          <div className="w-20 h-20 bg-gradient-to-br from-teal-400 to-purple-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-lg">
+            <Receipt className="w-10 h-10 text-white" />
+          </div>
+          
+          {/* Brand Name */}
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            QuikReceipts
+          </h1>
+          <p className="text-gray-600 mb-8 font-medium">
+            Create beautiful receipts in seconds
+          </p>
+          
+          {/* CTA Buttons */}
+          <div className="space-y-4">
+            <Link 
+              href="/create-receipt"
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-teal-500 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 w-full justify-center"
+            >
+              <Sparkles className="w-5 h-5" />
+              Create Receipt
+            </Link>
+            
+            <button
+              onClick={loadDemoData}
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 w-full justify-center"
+            >
+              <Play className="w-4 h-4" />
+              Try Demo
+            </button>
+          </div>
+          
+          {/* Decorative Elements */}
+          <div className="mt-8 flex justify-center gap-2">
+            <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-100"></div>
+            <div className="w-2 h-2 bg-teal-400 rounded-full animate-pulse delay-200"></div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        
+        {/* Footer */}
+        <p className="text-center text-white/80 mt-6 text-sm">
+        Instant receipts, zero hassle.
+        </p>
+      </div>
     </div>
   );
 }
