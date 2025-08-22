@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Download, Share2, Receipt, Building2, User, Calendar, Phone } from "lucide-react";
+import {
+  ArrowLeft,
+  Download,
+  Share2,
+  Receipt,
+  Building2,
+  User,
+  Calendar,
+  Phone,
+} from "lucide-react";
 import Link from "next/link";
 import jsPDF from "jspdf";
 
@@ -27,18 +36,19 @@ export default function ReceiptPreview() {
   const [receiptData, setReceiptData] = useState<ReceiptData | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('receiptData');
+    const stored = localStorage.getItem("receiptData");
     if (stored) {
       setReceiptData(JSON.parse(stored));
     } else {
-      router.push('/create-receipt');
+      router.push("/create-receipt");
     }
   }, [router]);
 
   const calculateTotal = () => {
     if (!receiptData) return 0;
-    return receiptData.products.reduce((sum, product) => 
-      sum + (product.price * product.quantity), 0
+    return receiptData.products.reduce(
+      (sum, product) => sum + product.price * product.quantity,
+      0
     );
   };
 
@@ -48,7 +58,7 @@ export default function ReceiptPreview() {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     const margin = 20;
-    const contentWidth = pageWidth - (margin * 2);
+    const contentWidth = pageWidth - margin * 2;
     let yPosition = 30;
 
     // Header
@@ -60,15 +70,15 @@ export default function ReceiptPreview() {
     // Business Info
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.setFont(undefined, 'bold');
+    doc.setFont(undefined, "bold");
     doc.text(receiptData.businessName, margin, yPosition);
     yPosition += 8;
-    
-    doc.setFont(undefined, 'normal');
+
+    doc.setFont(undefined, "normal");
     doc.setFontSize(10);
     doc.text(receiptData.businessAddress, margin, yPosition);
     yPosition += 8;
-    
+
     if (receiptData.businessPhone) {
       doc.text(`Phone: ${receiptData.businessPhone}`, margin, yPosition);
       yPosition += 8;
@@ -77,22 +87,22 @@ export default function ReceiptPreview() {
     yPosition += 10;
 
     // Customer Info
-    doc.setFont(undefined, 'bold');
+    doc.setFont(undefined, "bold");
     doc.text("Bill To:", margin, yPosition);
     yPosition += 8;
-    
-    doc.setFont(undefined, 'normal');
+
+    doc.setFont(undefined, "normal");
     doc.text(receiptData.buyerName, margin, yPosition);
     yPosition += 8;
-    
+
     doc.text(`Date: ${receiptData.date}`, margin, yPosition);
     yPosition += 15;
 
     // Products Table Header
-    doc.setFont(undefined, 'bold');
+    doc.setFont(undefined, "bold");
     doc.setFillColor(240, 248, 255); // Light blue background
-    doc.rect(margin, yPosition - 5, contentWidth, 10, 'F');
-    
+    doc.rect(margin, yPosition - 5, contentWidth, 10, "F");
+
     doc.text("Item", margin + 5, yPosition);
     doc.text("Price", margin + 120, yPosition);
     doc.text("Qty", margin + 160, yPosition);
@@ -100,10 +110,10 @@ export default function ReceiptPreview() {
     yPosition += 15;
 
     // Products
-    doc.setFont(undefined, 'normal');
-    receiptData.products.forEach(product => {
+    doc.setFont(undefined, "normal");
+    receiptData.products.forEach((product) => {
       const itemTotal = product.price * product.quantity;
-      
+
       doc.text(product.name, margin + 5, yPosition);
       doc.text(`$${product.price.toFixed(2)}`, margin + 120, yPosition);
       doc.text(product.quantity.toString(), margin + 160, yPosition);
@@ -114,21 +124,23 @@ export default function ReceiptPreview() {
     yPosition += 10;
 
     // Total
-    doc.setFont(undefined, 'bold');
+    doc.setFont(undefined, "bold");
     doc.setFontSize(14);
     doc.setFillColor(0, 191, 174, 0.1); // Light teal background
-    doc.rect(margin, yPosition - 5, contentWidth, 15, 'F');
-    
+    doc.rect(margin, yPosition - 5, contentWidth, 15, "F");
+
     const total = calculateTotal();
     doc.text("TOTAL:", margin + 120, yPosition);
     doc.text(`$${total.toFixed(2)}`, margin + 190, yPosition);
 
     // Footer
     yPosition += 25;
-    doc.setFont(undefined, 'normal');
+    doc.setFont(undefined, "normal");
     doc.setFontSize(8);
     doc.setTextColor(128, 128, 128);
-    doc.text("Thank you for your business!", pageWidth / 2, yPosition, { align: "center" });
+    doc.text("Thank you for your business!", pageWidth / 2, yPosition, {
+      align: "center",
+    });
 
     // Save PDF
     doc.save(`${receiptData.businessName}-receipt-${receiptData.date}.pdf`);
@@ -142,23 +154,29 @@ export default function ReceiptPreview() {
         // Generate PDF blob for sharing
         const doc = new jsPDF();
         // ... same PDF generation logic as above ...
-        const pdfBlob = doc.output('blob');
-        const file = new File([pdfBlob], `${receiptData.businessName}-receipt.pdf`, { type: 'application/pdf' });
-        
+        const pdfBlob = doc.output("blob");
+        const file = new File(
+          [pdfBlob],
+          `${receiptData.businessName}-receipt.pdf`,
+          { type: "application/pdf" }
+        );
+
         await navigator.share({
-          title: 'Receipt',
+          title: "Receipt",
           text: `Receipt from ${receiptData.businessName}`,
-          files: [file]
+          files: [file],
         });
       } else {
         // Fallback: copy to clipboard
-        const text = `Receipt from ${receiptData.businessName}\nTotal: $${calculateTotal().toFixed(2)}\nDate: ${receiptData.date}`;
+        const text = `Receipt from ${
+          receiptData.businessName
+        }\nTotal: $${calculateTotal().toFixed(2)}\nDate: ${receiptData.date}`;
         await navigator.clipboard.writeText(text);
-        alert('Receipt details copied to clipboard!');
+        alert("Receipt details copied to clipboard!");
       }
     } catch (error) {
-      console.error('Error sharing:', error);
-      alert('Unable to share receipt');
+      console.error("Error sharing:", error);
+      alert("Unable to share receipt");
     }
   };
 
@@ -178,7 +196,7 @@ export default function ReceiptPreview() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Link 
+          <Link
             href="/create-receipt"
             className="p-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
           >
@@ -211,9 +229,13 @@ export default function ReceiptPreview() {
                     <Building2 className="w-5 h-5 text-teal-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Business Details</h3>
+                    <h3 className="font-semibold text-gray-800">
+                      Business Details
+                    </h3>
                     <p className="text-gray-600">{receiptData.businessName}</p>
-                    <p className="text-gray-600">{receiptData.businessAddress}</p>
+                    <p className="text-gray-600">
+                      {receiptData.businessAddress}
+                    </p>
                     {receiptData.businessPhone && (
                       <p className="text-gray-600 flex items-center gap-2">
                         <Phone className="w-4 h-4" />
@@ -230,7 +252,9 @@ export default function ReceiptPreview() {
                     <User className="w-5 h-5 text-magenta-600" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800">Customer Details</h3>
+                    <h3 className="font-semibold text-gray-800">
+                      Customer Details
+                    </h3>
                     <p className="text-gray-600">{receiptData.buyerName}</p>
                     <p className="text-gray-600 flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
@@ -244,19 +268,28 @@ export default function ReceiptPreview() {
             {/* Products Table */}
             <div className="mb-8">
               <div className="bg-gray-50 rounded-2xl p-6">
-                <h3 className="font-semibold text-gray-800 mb-4">Products & Services</h3>
+                <h3 className="font-semibold text-gray-800 mb-4">
+                  Products & Services
+                </h3>
                 <div className="space-y-3">
                   {receiptData.products.map((product) => {
                     const itemTotal = product.price * product.quantity;
                     return (
-                      <div key={product.id} className="flex justify-between items-center py-3 border-b border-gray-200 last:border-b-0">
+                      <div
+                        key={product.id}
+                        className="flex justify-between items-center py-3 border-b border-gray-200 last:border-b-0"
+                      >
                         <div className="flex-1">
-                          <p className="font-medium text-gray-800">{product.name}</p>
+                          <p className="font-medium text-gray-800">
+                            {product.name}
+                          </p>
                           <p className="text-sm text-gray-600">
                             ${product.price.toFixed(2)} × {product.quantity}
                           </p>
                         </div>
-                        <p className="font-semibold text-gray-800">${itemTotal.toFixed(2)}</p>
+                        <p className="font-semibold text-gray-800">
+                          ${itemTotal.toFixed(2)}
+                        </p>
                       </div>
                     );
                   })}
@@ -267,7 +300,9 @@ export default function ReceiptPreview() {
             {/* Total */}
             <div className="bg-gradient-to-r from-teal-50 to-purple-50 rounded-2xl p-6 border border-teal-200 mb-8">
               <div className="flex justify-between items-center">
-                <span className="text-2xl font-bold text-gray-800">Total Amount</span>
+                <span className="text-2xl font-bold text-gray-800">
+                  Total Amount
+                </span>
                 <span className="text-3xl font-bold text-teal-600">
                   ${calculateTotal().toFixed(2)}
                 </span>
@@ -283,7 +318,7 @@ export default function ReceiptPreview() {
                 <Download className="w-5 h-5" />
                 Download PDF
               </button>
-              
+
               <button
                 onClick={sharePDF}
                 className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-magenta-500 to-magenta-600 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
@@ -297,7 +332,7 @@ export default function ReceiptPreview() {
 
         {/* Back to Create */}
         <div className="text-center mt-8">
-          <Link 
+          <Link
             href="/create-receipt"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
           >

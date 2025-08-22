@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Plus, Trash2, Receipt, Building2, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  Receipt,
+  Building2,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 
 interface Product {
@@ -27,62 +34,69 @@ export default function CreateReceipt() {
     // Use a fixed date to avoid hydration issues
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     const dateString = `${year}-${month}-${day}`;
-    
+
     return {
       businessName: "",
       businessAddress: "",
       businessPhone: "",
       buyerName: "",
       date: dateString,
-      products: [{ id: "1", name: "", price: 0, quantity: 1 }]
+      products: [{ id: "1", name: "", price: 0, quantity: 1 }],
     };
   });
 
   const addProduct = () => {
     const newProduct: Product = {
-      id: `product-${receiptData.products.length + 1}-${Math.random().toString(36).substr(2, 9)}`,
+      id: `product-${receiptData.products.length + 1}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`,
       name: "",
       price: 0,
-      quantity: 1
+      quantity: 1,
     };
-    setReceiptData(prev => ({
+    setReceiptData((prev) => ({
       ...prev,
-      products: [...prev.products, newProduct]
+      products: [...prev.products, newProduct],
     }));
   };
 
   const removeProduct = (id: string) => {
     if (receiptData.products.length > 1) {
-      setReceiptData(prev => ({
+      setReceiptData((prev) => ({
         ...prev,
-        products: prev.products.filter(p => p.id !== id)
+        products: prev.products.filter((p) => p.id !== id),
       }));
     }
   };
 
-  const updateProduct = (id: string, field: keyof Product, value: string | number) => {
-    setReceiptData(prev => ({
+  const updateProduct = (
+    id: string,
+    field: keyof Product,
+    value: string | number
+  ) => {
+    setReceiptData((prev) => ({
       ...prev,
-      products: prev.products.map(p => 
+      products: prev.products.map((p) =>
         p.id === id ? { ...p, [field]: value } : p
-      )
+      ),
     }));
   };
 
   const calculateTotal = () => {
-    return receiptData.products.reduce((sum, product) => 
-      sum + (product.price * product.quantity), 0
+    return receiptData.products.reduce(
+      (sum, product) => sum + product.price * product.quantity,
+      0
     );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Store data in localStorage and navigate to preview
-    localStorage.setItem('receiptData', JSON.stringify(receiptData));
-    router.push('/receipt-preview');
+    localStorage.setItem("receiptData", JSON.stringify(receiptData));
+    router.push("/receipt-preview");
   };
 
   return (
@@ -90,7 +104,7 @@ export default function CreateReceipt() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
-          <Link 
+          <Link
             href="/"
             className="p-2 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow"
           >
@@ -111,39 +125,62 @@ export default function CreateReceipt() {
               <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center">
                 <Building2 className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Business Information</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Business Information
+              </h2>
             </div>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Business Name</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Business Name
+                </label>
                 <input
                   type="text"
                   value={receiptData.businessName}
-                  onChange={(e) => setReceiptData(prev => ({ ...prev, businessName: e.target.value }))}
+                  onChange={(e) =>
+                    setReceiptData((prev) => ({
+                      ...prev,
+                      businessName: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="Your Business Name"
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Phone Number
+                </label>
                 <input
                   type="tel"
                   value={receiptData.businessPhone}
-                  onChange={(e) => setReceiptData(prev => ({ ...prev, businessPhone: e.target.value }))}
+                  onChange={(e) =>
+                    setReceiptData((prev) => ({
+                      ...prev,
+                      businessPhone: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
-              
+
               <div className="md:col-span-2 space-y-2">
-                <label className="text-sm font-medium text-gray-700">Business Address</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Business Address
+                </label>
                 <input
                   type="text"
                   value={receiptData.businessAddress}
-                  onChange={(e) => setReceiptData(prev => ({ ...prev, businessAddress: e.target.value }))}
+                  onChange={(e) =>
+                    setReceiptData((prev) => ({
+                      ...prev,
+                      businessAddress: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="123 Business St, City, State 12345"
                 />
@@ -157,28 +194,44 @@ export default function CreateReceipt() {
               <div className="w-10 h-10 bg-gradient-to-br from-magenta-400 to-magenta-600 rounded-xl flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">Customer Information</h2>
+              <h2 className="text-xl font-semibold text-gray-800">
+                Customer Information
+              </h2>
             </div>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Customer Name</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Customer Name
+                </label>
                 <input
                   type="text"
                   value={receiptData.buyerName}
-                  onChange={(e) => setReceiptData(prev => ({ ...prev, buyerName: e.target.value }))}
+                  onChange={(e) =>
+                    setReceiptData((prev) => ({
+                      ...prev,
+                      buyerName: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   placeholder="Customer's Full Name"
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Date</label>
+                <label className="text-sm font-medium text-gray-700">
+                  Date
+                </label>
                 <input
                   type="date"
                   value={receiptData.date}
-                  onChange={(e) => setReceiptData(prev => ({ ...prev, date: e.target.value }))}
+                  onChange={(e) =>
+                    setReceiptData((prev) => ({
+                      ...prev,
+                      date: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   required
                 />
@@ -193,9 +246,11 @@ export default function CreateReceipt() {
                 <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center">
                   <Receipt className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800">Products & Services</h2>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Products & Services
+                </h2>
               </div>
-              
+
               <button
                 type="button"
                 onClick={addProduct}
@@ -208,49 +263,69 @@ export default function CreateReceipt() {
 
             <div className="space-y-4">
               {receiptData.products.map((product) => (
-                <div 
+                <div
                   key={product.id}
                   className="grid md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200 animate-in slide-in-from-bottom-2 duration-300"
                 >
                   <div className="md:col-span-2 space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Product/Service Name</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Product/Service Name
+                    </label>
                     <input
                       type="text"
                       value={product.name}
-                      onChange={(e) => updateProduct(product.id, 'name', e.target.value)}
+                      onChange={(e) =>
+                        updateProduct(product.id, "name", e.target.value)
+                      }
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                       placeholder="Product or service name"
                       required
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Price ($)</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Price ($)
+                    </label>
                     <input
                       type="number"
                       step="0.01"
                       min="0"
                       value={product.price}
-                      onChange={(e) => updateProduct(product.id, 'price', parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        updateProduct(
+                          product.id,
+                          "price",
+                          parseFloat(e.target.value) || 0
+                        )
+                      }
                       className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                       placeholder="0.00"
                       required
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Qty</label>
+                    <label className="text-sm font-medium text-gray-700">
+                      Qty
+                    </label>
                     <div className="flex items-center gap-2">
                       <input
                         type="number"
                         min="1"
                         value={product.quantity}
-                        onChange={(e) => updateProduct(product.id, 'quantity', parseInt(e.target.value) || 1)}
+                        onChange={(e) =>
+                          updateProduct(
+                            product.id,
+                            "quantity",
+                            parseInt(e.target.value) || 1
+                          )
+                        }
                         className="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                         placeholder="1"
                         required
                       />
-                      
+
                       {receiptData.products.length > 1 && (
                         <button
                           type="button"
@@ -269,7 +344,9 @@ export default function CreateReceipt() {
             {/* Total */}
             <div className="mt-6 p-4 bg-gradient-to-r from-teal-50 to-purple-50 rounded-2xl border border-teal-200">
               <div className="flex justify-between items-center">
-                <span className="text-lg font-semibold text-gray-800">Total Amount:</span>
+                <span className="text-lg font-semibold text-gray-800">
+                  Total Amount:
+                </span>
                 <span className="text-2xl font-bold text-teal-600">
                   ${calculateTotal().toFixed(2)}
                 </span>
