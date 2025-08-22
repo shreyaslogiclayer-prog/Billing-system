@@ -115,9 +115,9 @@ export default function ReceiptPreview() {
       const itemTotal = product.price * product.quantity;
 
       doc.text(product.name, margin + 5, yPosition);
-      doc.text(`$${product.price.toFixed(2)}`, margin + 120, yPosition);
+      doc.text(`₹${product.price.toFixed(2)}`, margin + 120, yPosition);
       doc.text(product.quantity.toString(), margin + 160, yPosition);
-      doc.text(`$${itemTotal.toFixed(2)}`, margin + 190, yPosition);
+      doc.text(`₹${itemTotal.toFixed(2)}`, margin + 190, yPosition);
       yPosition += 8;
     });
 
@@ -131,7 +131,7 @@ export default function ReceiptPreview() {
 
     const total = calculateTotal();
     doc.text("TOTAL:", margin + 120, yPosition);
-    doc.text(`$${total.toFixed(2)}`, margin + 190, yPosition);
+    doc.text(`₹${total.toFixed(2)}`, margin + 190, yPosition);
 
     // Footer
     yPosition += 25;
@@ -170,7 +170,7 @@ export default function ReceiptPreview() {
         // Fallback: copy to clipboard
         const text = `Receipt from ${
           receiptData.businessName
-        }\nTotal: $${calculateTotal().toFixed(2)}\nDate: ${receiptData.date}`;
+        }\nTotal: ₹${calculateTotal().toFixed(2)}\nDate: ${receiptData.date}`;
         await navigator.clipboard.writeText(text);
         alert("Receipt details copied to clipboard!");
       }
@@ -284,11 +284,11 @@ export default function ReceiptPreview() {
                             {product.name}
                           </p>
                           <p className="text-sm text-gray-600">
-                            ${product.price.toFixed(2)} × {product.quantity}
+                            ₹{product.price.toFixed(2)} × {product.quantity}
                           </p>
                         </div>
                         <p className="font-semibold text-gray-800">
-                          ${itemTotal.toFixed(2)}
+                          ₹{itemTotal.toFixed(2)}
                         </p>
                       </div>
                     );
@@ -304,7 +304,7 @@ export default function ReceiptPreview() {
                   Total Amount
                 </span>
                 <span className="text-3xl font-bold text-teal-600">
-                  ${calculateTotal().toFixed(2)}
+                  ₹{calculateTotal().toFixed(2)}
                 </span>
               </div>
             </div>

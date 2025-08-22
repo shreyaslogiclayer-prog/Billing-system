@@ -131,8 +131,10 @@ export default function PWAProvider({
         <div className="fixed bottom-4 left-4 right-4 bg-white p-4 rounded-lg shadow-lg z-50 md:left-auto md:right-4 md:w-80">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-gray-800">Install PWA App</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="font-bold text-sm text-gray-800">
+                Install QuikReceipts
+              </h3>
+              <p className="text-xs text-gray-600">
                 Add to your home screen for quick access
               </p>
             </div>
