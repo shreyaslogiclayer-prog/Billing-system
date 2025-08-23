@@ -165,7 +165,7 @@ export default function CreateReceipt() {
           {/* Customer Information */}
           <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-magenta-400 to-magenta-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
               <h2 className="text-xl font-semibold text-gray-800">
@@ -207,7 +207,7 @@ export default function CreateReceipt() {
           <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-teal-400 to-teal-600 rounded-xl flex items-center justify-center">
                   <Receipt className="w-5 h-5 text-white" />
                 </div>
                 <h2 className="text-xl font-semibold text-gray-800">
@@ -218,9 +218,9 @@ export default function CreateReceipt() {
               <button
                 type="button"
                 onClick={addProduct}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                className="flex font-semibold items-center border gap-1 sm:gap-2 px-2 sm:px-4 py-1.5 sm:py-2 text-teal-600 text-sm sm:text-xs rounded-lg sm:rounded-xl hover:shadow-md"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
                 Add Product
               </button>
             </div>

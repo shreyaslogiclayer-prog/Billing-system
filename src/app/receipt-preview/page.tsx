@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import jsPDF from "jspdf";
+import { Toaster, toast } from "sonner";
 
 interface Product {
   id: string;
@@ -57,90 +58,123 @@ export default function ReceiptPreview() {
 
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
-    const margin = 20;
+    const margin = 15;
     const contentWidth = pageWidth - margin * 2;
-    let yPosition = 30;
+    let yPosition = 20;
 
-    // Header
+    // Add Unicode font for Rupee symbol
+    doc.setFont("helvetica");
+
+    // Header with logo placeholder
+    doc.setFillColor(0, 128, 128);
+    doc.rect(0, 0, pageWidth, 40, "F");
+
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(24);
-    doc.setTextColor(0, 191, 174); // Teal color
-    doc.text("RECEIPT", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 20;
+    doc.setFont("helvetica", "bold");
+    doc.text("RECEIPT", pageWidth / 2, yPosition + 5, { align: "center" });
 
-    // Business Info
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0);
-    doc.setFont(undefined, "bold");
-    doc.text(receiptData.businessName, margin, yPosition);
-    yPosition += 8;
-
-    doc.setFont(undefined, "normal");
-    doc.setFontSize(10);
-    doc.text(receiptData.businessAddress, margin, yPosition);
-    yPosition += 8;
-
-    if (receiptData.businessPhone) {
-      doc.text(`Phone: ${receiptData.businessPhone}`, margin, yPosition);
-      yPosition += 8;
-    }
-
-    yPosition += 10;
-
-    // Customer Info
-    doc.setFont(undefined, "bold");
-    doc.text("Bill To:", margin, yPosition);
-    yPosition += 8;
-
-    doc.setFont(undefined, "normal");
-    doc.text(receiptData.buyerName, margin, yPosition);
-    yPosition += 8;
-
-    doc.text(`Date: ${receiptData.date}`, margin, yPosition);
-    yPosition += 15;
-
-    // Products Table Header
-    doc.setFont(undefined, "bold");
-    doc.setFillColor(240, 248, 255); // Light blue background
-    doc.rect(margin, yPosition - 5, contentWidth, 10, "F");
-
-    doc.text("Item", margin + 5, yPosition);
-    doc.text("Price", margin + 120, yPosition);
-    doc.text("Qty", margin + 160, yPosition);
-    doc.text("Total", margin + 190, yPosition);
-    yPosition += 15;
-
-    // Products
-    doc.setFont(undefined, "normal");
-    receiptData.products.forEach((product) => {
-      const itemTotal = product.price * product.quantity;
-
-      doc.text(product.name, margin + 5, yPosition);
-      doc.text(`₹${product.price.toFixed(2)}`, margin + 120, yPosition);
-      doc.text(product.quantity.toString(), margin + 160, yPosition);
-      doc.text(`₹${itemTotal.toFixed(2)}`, margin + 190, yPosition);
-      yPosition += 8;
-    });
-
-    yPosition += 10;
-
-    // Total
-    doc.setFont(undefined, "bold");
     doc.setFontSize(14);
-    doc.setFillColor(0, 191, 174, 0.1); // Light teal background
-    doc.rect(margin, yPosition - 5, contentWidth, 15, "F");
-
-    const total = calculateTotal();
-    doc.text("TOTAL:", margin + 120, yPosition);
-    doc.text(`₹${total.toFixed(2)}`, margin + 190, yPosition);
-
-    // Footer
-    yPosition += 25;
-    doc.setFont(undefined, "normal");
-    doc.setFontSize(8);
-    doc.setTextColor(128, 128, 128);
-    doc.text("Thank you for your business!", pageWidth / 2, yPosition, {
+    doc.setFont("helvetica", "normal");
+    doc.text(receiptData.businessName, pageWidth / 2, yPosition + 20, {
       align: "center",
     });
+
+    yPosition += 50;
+
+    // Business & Customer Info in two columns
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+
+    // Left column - Business Info
+    doc.setFont("helvetica", "bold");
+    doc.text("From:", margin, yPosition);
+    doc.setFont("helvetica", "normal");
+    doc.text(receiptData.businessName, margin, yPosition + 10);
+    doc.text(receiptData.businessAddress, margin, yPosition + 15);
+    if (receiptData.businessPhone) {
+      doc.text(`Phone: ${receiptData.businessPhone}`, margin, yPosition + 20);
+    }
+
+    // Right column - Customer Info
+    doc.setFont("helvetica", "bold");
+    doc.text("Bill To:", pageWidth - margin - 80, yPosition);
+    doc.setFont("helvetica", "normal");
+    doc.text(receiptData.buyerName, pageWidth - margin - 80, yPosition + 10);
+    doc.text(
+      `Date: ${receiptData.date}`,
+      pageWidth - margin - 80,
+      yPosition + 15
+    );
+
+    yPosition += 40;
+
+    // Products Table
+    const tableHeaders = ["Item", "Price", "Quantity", "Total"];
+    const tableTop = yPosition;
+    const columnWidth = contentWidth / 4;
+
+    // Table Header Background
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin, yPosition - 5, contentWidth, 10, "F");
+
+    // Table Headers
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    tableHeaders.forEach((header, index) => {
+      doc.text(header, margin + columnWidth * index, yPosition);
+    });
+
+    yPosition += 10;
+
+    // Table Content
+    doc.setFont("helvetica", "normal");
+    receiptData.products.forEach((product, index) => {
+      const itemTotal = product.price * product.quantity;
+      const rowY = yPosition + index * 12;
+
+      // Zebra striping
+      if (index % 2 === 0) {
+        doc.setFillColor(250, 250, 250);
+        doc.rect(margin, rowY - 5, contentWidth, 12, "F");
+      }
+
+      doc.text(product.name.substring(0, 25), margin, rowY);
+      doc.text("\u20B9" + product.price.toFixed(2), margin + columnWidth, rowY);
+      doc.text(product.quantity.toString(), margin + columnWidth * 2, rowY);
+      doc.text("\u20B9" + itemTotal.toFixed(2), margin + columnWidth * 3, rowY);
+    });
+
+    yPosition += receiptData.products.length * 12 + 10;
+
+    // Total Section
+    doc.setFillColor(0, 128, 128, 0.1);
+    doc.rect(margin, yPosition - 5, contentWidth, 15, "F");
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    const total = calculateTotal();
+    doc.text("Total Amount:", margin + columnWidth * 2, yPosition + 5);
+    doc.text(
+      "\u20B9" + total.toFixed(2),
+      margin + columnWidth * 3,
+      yPosition + 5
+    );
+
+    // Footer
+    yPosition += 30;
+    doc.setFillColor(0, 128, 128);
+    doc.rect(0, doc.internal.pageSize.height - 20, pageWidth, 20, "F");
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text(
+      "Thank you for your business!",
+      pageWidth / 2,
+      doc.internal.pageSize.height - 10,
+      { align: "center" }
+    );
 
     // Save PDF
     doc.save(`${receiptData.businessName}-receipt-${receiptData.date}.pdf`);
@@ -150,33 +184,193 @@ export default function ReceiptPreview() {
     if (!receiptData) return;
 
     try {
-      if (navigator.share) {
-        // Generate PDF blob for sharing
-        const doc = new jsPDF();
-        // ... same PDF generation logic as above ...
-        const pdfBlob = doc.output("blob");
+      // Generate PDF with the same formatting as download
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.width;
+      const margin = 15;
+      const contentWidth = pageWidth - margin * 2;
+      let yPosition = 20;
+
+      // Add Unicode font for Rupee symbol
+      doc.setFont("helvetica");
+
+      // Header with logo placeholder
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, 0, pageWidth, 40, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(24);
+      doc.setFont("helvetica", "bold");
+      doc.text("RECEIPT", pageWidth / 2, yPosition + 5, { align: "center" });
+
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "normal");
+      doc.text(receiptData.businessName, pageWidth / 2, yPosition + 20, {
+        align: "center",
+      });
+
+      yPosition += 50;
+
+      // Business & Customer Info in two columns
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(10);
+
+      // Left column - Business Info
+      doc.setFont("helvetica", "bold");
+      doc.text("From:", margin, yPosition);
+      doc.setFont("helvetica", "normal");
+      doc.text(receiptData.businessName, margin, yPosition + 10);
+      doc.text(receiptData.businessAddress, margin, yPosition + 15);
+      if (receiptData.businessPhone) {
+        doc.text(`Phone: ${receiptData.businessPhone}`, margin, yPosition + 20);
+      }
+
+      // Right column - Customer Info
+      doc.setFont("helvetica", "bold");
+      doc.text("Bill To:", pageWidth - margin - 80, yPosition);
+      doc.setFont("helvetica", "normal");
+      doc.text(receiptData.buyerName, pageWidth - margin - 80, yPosition + 10);
+      doc.text(
+        `Date: ${receiptData.date}`,
+        pageWidth - margin - 80,
+        yPosition + 15
+      );
+
+      yPosition += 40;
+
+      // Products Table
+      const tableHeaders = ["Item", "Price", "Quantity", "Total"];
+      const columnWidth = contentWidth / 4;
+
+      // Table Header Background
+      doc.setFillColor(240, 240, 240);
+      doc.rect(margin, yPosition - 5, contentWidth, 10, "F");
+
+      // Table Headers
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(10);
+      tableHeaders.forEach((header, index) => {
+        doc.text(header, margin + columnWidth * index, yPosition);
+      });
+
+      yPosition += 10;
+
+      // Table Content
+      doc.setFont("helvetica", "normal");
+      receiptData.products.forEach((product, index) => {
+        const itemTotal = product.price * product.quantity;
+        const rowY = yPosition + index * 12;
+
+        // Zebra striping
+        if (index % 2 === 0) {
+          doc.setFillColor(250, 250, 250);
+          doc.rect(margin, rowY - 5, contentWidth, 12, "F");
+        }
+
+        doc.text(product.name.substring(0, 25), margin, rowY);
+        doc.text(
+          "\u20B9" + product.price.toFixed(2),
+          margin + columnWidth,
+          rowY
+        );
+        doc.text(product.quantity.toString(), margin + columnWidth * 2, rowY);
+        doc.text(
+          "\u20B9" + itemTotal.toFixed(2),
+          margin + columnWidth * 3,
+          rowY
+        );
+      });
+
+      yPosition += receiptData.products.length * 12 + 10;
+
+      // Total Section
+      doc.setFillColor(0, 128, 128, 0.1);
+      doc.rect(margin, yPosition - 5, contentWidth, 15, "F");
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      const total = calculateTotal();
+      doc.text("Total Amount:", margin + columnWidth * 2, yPosition + 5);
+      doc.text(
+        "\u20B9" + total.toFixed(2),
+        margin + columnWidth * 3,
+        yPosition + 5
+      );
+
+      // Footer
+      yPosition += 30;
+      doc.setFillColor(0, 128, 128);
+      doc.rect(0, doc.internal.pageSize.height - 20, pageWidth, 20, "F");
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(255, 255, 255);
+      doc.text(
+        "Thank you for your business!",
+        pageWidth / 2,
+        doc.internal.pageSize.height - 10,
+        { align: "center" }
+      );
+
+      // Create PDF blob for sharing
+      const pdfBlob = doc.output("blob");
+
+      if (navigator.share && navigator.canShare) {
         const file = new File(
           [pdfBlob],
           `${receiptData.businessName}-receipt.pdf`,
-          { type: "application/pdf" }
+          {
+            type: "application/pdf",
+          }
         );
 
-        await navigator.share({
+        const shareData = {
           title: "Receipt",
           text: `Receipt from ${receiptData.businessName}`,
           files: [file],
-        });
+        };
+
+        // Check if we can share files
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          toast.success("Receipt shared successfully!", {
+            duration: 3000,
+            position: "bottom-center",
+          });
+        } else {
+          // Fallback to sharing just text if file sharing is not supported
+          await navigator.share({
+            title: "Receipt",
+            text: `Receipt from ${
+              receiptData.businessName
+            }\nTotal: ${"\u20B9"}${calculateTotal().toFixed(2)}\nDate: ${
+              receiptData.date
+            }`,
+          });
+          toast.success("Receipt details shared!", {
+            duration: 3000,
+            position: "bottom-center",
+          });
+        }
       } else {
-        // Fallback: copy to clipboard
+        // Fallback for desktop: copy to clipboard
         const text = `Receipt from ${
           receiptData.businessName
-        }\nTotal: ₹${calculateTotal().toFixed(2)}\nDate: ${receiptData.date}`;
+        }\nTotal: ${"\u20B9"}${calculateTotal().toFixed(2)}\nDate: ${
+          receiptData.date
+        }`;
         await navigator.clipboard.writeText(text);
-        alert("Receipt details copied to clipboard!");
+        toast.success("Receipt details copied to clipboard!", {
+          duration: 3000,
+          position: "bottom-center",
+        });
       }
     } catch (error) {
       console.error("Error sharing:", error);
-      alert("Unable to share receipt");
+      toast.error("Unable to share receipt. Please try downloading instead.", {
+        duration: 3000,
+        position: "bottom-center",
+      });
     }
   };
 
@@ -193,6 +387,7 @@ export default function ReceiptPreview() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-blue-50 to-purple-50 py-8 px-4">
+      <Toaster richColors expand={true} position="top-right" />
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -321,7 +516,7 @@ export default function ReceiptPreview() {
 
               <button
                 onClick={sharePDF}
-                className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-magenta-500 to-magenta-600 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
               >
                 <Share2 className="w-5 h-5" />
                 Share PDF
